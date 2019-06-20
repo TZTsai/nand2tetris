@@ -38,6 +38,28 @@ CHIP CPU {
         addressM[15],    // Address in data memory (of M)
         pc[15];          // address of next instruction
 
+    // inst[3]: dest M
+    // inst[4]: dest D
+    // inst[5]: dest A
+    // inst[2]: jump neg
+    // inst[1]: jump zero
+    // inst[0]: jump pos
+    // inst[15]: instruction type
+    // inst[12]: ALU use value in A (0) or M (1)
     PARTS:
-    // Put your code here:
+    Mux16(a=instruction, b=ALUout, sel=instruction[15], out=Ain);
+    Not(in=instruction[15], out=Ainstr);
+    Or(a=Ainstr, b=instruction[5], out=Ald);
+    ARegister(in=Ain, load=Ald, out=Aout, out[0..14]=addressM);
+    Mux16(a=Aout, b=inM, sel=instruction[12], out=AorM);
+    And(a=instruction[15], b=instruction[4], out=Dld);
+    DRegister(in=ALUout, load=Dld, out=Dout);
+    ALU(x=Dout, y=AorM, zx=instruction[11], nx=instruction[10], zy=instruction[9], ny=instruction[8], f=instruction[7], no=instruction[6], out=outM, out=ALUout, zr=zero, ng=neg);
+    And(a=instruction[15], b=instruction[2], out=jumpNeg);
+    And(a=instruction[15], b=instruction[1], out=jumpZero);
+    And(a=instruction[15], b=instruction[0], out=jumpPos);
+    Mux(a=jumpPos, b=jumpNeg, sel=neg, out=jumpNonZero);
+    Mux(a=jumpNonZero, b=jumpZero, sel=zero, out=jump);
+    PC(in=Aout, load=jump, inc=true, reset=reset, out[0..14]=pc);
+    And(a=instruction[15], b=instruction[3], out=writeM);
 }
