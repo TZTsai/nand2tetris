@@ -13,11 +13,13 @@ class SyntaxError {};
 
 enum command_t {A_COMMAND, C_COMMAND, L_COMMAND};
 
-typedef string bits;
+typedef string bits;  // define bis as a string of "0"s and "1"s
 
 const string LEGAL_PUNCTUATIONS = "_.$:";
 
-string DecimalToBits(string num);
+bool isNumeral(string s);
+
+string DecimalToBits(int num);
 
 class Parser
 {
@@ -53,4 +55,15 @@ public:
     bits dest(string mnemonic);  // return bits with len = 3
     bits comp(string mnemonic);  // return bits with len = 7
     bits jump(string mnemonic);  // return bits with len = 3
+};
+
+class SymbolTable
+{
+    map<string, int> symbolDict;
+
+public:
+    SymbolTable();
+    void addEntry(string symbol, int address);
+    bool contains(string symbol);
+    int GetAddress(string symbol);
 };

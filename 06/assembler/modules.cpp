@@ -21,6 +21,8 @@ Parser::Parser(string fileName)
         cerr << "cannot open source file " << fileName << "!\n";
         throw OpenFileError();
     }
+    address = 0;
+    varAddress = 1024;
 }
 
 Parser::~Parser()
@@ -73,6 +75,15 @@ static bool isSymbol(string str)
     return !str.empty();
 }
 
+bool isNumeral(string s)
+{
+    for (size_t i = 0; i < s.size(); i++)
+    {
+        if (!isdigit(s[i])) return false;
+    }
+    return true;
+}
+
 void Parser::parse()
 {
     removeBlankAndComment(currentInstr);
@@ -83,9 +94,12 @@ void Parser::parse()
     }
 
     char front = currentInstr[0];
-    if (front == '@') type = A_COMMAND;
-    else if (front == '(') type = L_COMMAND;
-    else type = C_COMMAND;
+    if (front == '@')
+        type = A_COMMAND;
+    else if (front == '(')
+        type = L_COMMAND;
+    else
+        type = C_COMMAND;
 
     if (type != C_COMMAND)
     // parse A_COMMAND or L_COMMAND
@@ -209,4 +223,28 @@ bits Code::jump(string mnemonic)
     map<string, bits>::iterator p = jumpDict.find(mnemonic);
     if (p == jumpDict.end()) throw SyntaxError();
     return p->second;
+}
+
+SymbolTable::SymbolTable(){}
+
+void SymbolTable::addEntry(string symbol, int address)
+{
+    if (contains(symbol))
+        cout << "Warning: rebinding symbol " << symbol << " as " << address << endl;
+    symbolDict.insert(pair<string, int>(symbol, address));
+}
+
+bool SymbolTable::contains(string symbol)
+{
+    map<string, int>::iterator p = symbolDict.find(symbol);
+    return p != symbolDict.end();
+}
+
+int SymbolTable::GetAddress(string symbol)
+{
+    map<string, int>::iterator p = symbolDict.find(symbol);
+    if (p != symbolDict.end())
+        return p->second;
+    cerr << "Unbound symbol: " << symbol << ".\n";
+    throw SyntaxError();
 }
