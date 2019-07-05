@@ -1,8 +1,7 @@
 #include "modules.h"
 
-string DecimalToBits(string num)
+string DecimalToBits(int n)
 {
-    int n = stoi(num);
     assert(0 <= n < 32768);
     string b;
     for (int i = 0; i < 15; i++)
@@ -21,8 +20,6 @@ Parser::Parser(string fileName)
         cerr << "cannot open source file " << fileName << "!\n";
         throw OpenFileError();
     }
-    address = 0;
-    varAddress = 1024;
 }
 
 Parser::~Parser()

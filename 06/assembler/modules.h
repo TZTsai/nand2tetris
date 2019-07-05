@@ -19,7 +19,7 @@ const string LEGAL_PUNCTUATIONS = "_.$:";
 
 bool isNumeral(string s);
 
-string DecimalToBits(int num);
+string DecimalToBits(int n);
 
 class Parser
 {

@@ -15,7 +15,7 @@ int main(int argc, char const *argv[])
     SymbolTable ST;
     ofstream FO(destFile);
     string binInstr;
-    int address = 0, varAddress = 16;
+    int ROMaddress = 0, RAMaddress = 16;
 
     // read for the first time
     while (P1.hasMoreCommands())
@@ -24,9 +24,9 @@ int main(int argc, char const *argv[])
         if (P1.commandType() == L_COMMAND)
         {
             string symbol = P1.symbol();
-            ST.addEntry(symbol, address + 1);
+            ST.addEntry(symbol, ROMaddress + 1);
         }
-        else address++;
+        else ROMaddress++;
     }
 
     // read for the second time
@@ -49,9 +49,9 @@ int main(int argc, char const *argv[])
                 binInstr = "0" + DecimalToBits(ST.GetAddress(symbol));
             else
             {
-                ST.addEntry(symbol, varAddress);
-                binInstr = "0" + DecimalToBits(varAddress);
-                varAddress++;
+                ST.addEntry(symbol, RAMaddress);
+                binInstr = "0" + DecimalToBits(RAMaddress);
+                RAMaddress++;
             }
         }
         FO << binInstr << endl;
