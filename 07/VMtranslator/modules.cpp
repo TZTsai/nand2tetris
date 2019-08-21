@@ -20,32 +20,37 @@ bool Parser::hasMoreCommands()
     return prog.good() && prog.peek() != EOF;
 }
 
-static void removeBlankAndComment(string &line)
+static void removeComment(string &line)
 {
-    auto it = line.begin();
-    while (it != line.end())
-    {
-        if (*it == '/' && *(it+1) == '/')
-        {
-            line.erase(it - line.begin());
-            return;
-        }
-        if (isspace(*it))
-        {
-            line.erase(it);
-            continue;
-        }
-        it++;
-    }
+    line = line.substr(0, line.find("//"));
+    if (line.find_first_not_of(' ') == string::npos)
+        line = "";
 }
 
 void Parser::advance()
 {
     if (hasMoreCommands())
     {
-        getline(prog, currentInstr);
-        
-        if (currentInstr == "") advance();
+        getline(prog, currentLine);
+        removeComment(currentLine);
+        if (currentLine == "") advance();
+        istringstream iss(currentLine);
+        iss >> cmd >> arg_1 >> arg_2;
     }
 }
 
+
+const string arithmeticCmd[] =
+{"add", "sub", "neg"};
+
+const string logicalCmd[] = 
+{"eq", "gt", "lt", "and", "or", "not"};
+
+command_t Parser::commandType()
+{
+    if (cmd == "add" || cmd == "sub" || cmd == "neg"
+    || cmd == "eq" || cmd == "gt" || cmd == "lt" ||
+    cmd == "and" || cmd == "or" || cmd == "not")
+        return C_ARITHMETIC;
+    
+}

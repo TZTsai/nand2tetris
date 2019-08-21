@@ -2,6 +2,7 @@
 #include <fstream>
 #include <sstream>
 #include <string>
+#include <vector>
 #include <cassert>
 
 using namespace std;
@@ -19,8 +20,10 @@ enum command_t
 class Parser
 {
     ifstream prog;
-    string currentInstr;
+    string currentLine;
     command_t type;
+    string cmd, arg_1;
+    int arg_2;
 
 public:
     Parser(string fileName);
