@@ -4,7 +4,7 @@ int main(int argc, char const *argv[])
 {
     if (argc != 3)
     {
-        cerr << "Wrong number of arguments. There should two arguments as the names of the source file and the dest file.\n";
+        cerr << "Wrong number of arguments. There should be two arguments as the names of the source file and the dest file.\n";
         return -1;
     }
     string sourceFile = argv[1];
@@ -24,7 +24,7 @@ int main(int argc, char const *argv[])
         if (P1.commandType() == L_COMMAND)
         {
             string symbol = P1.symbol();
-            ST.addEntry(symbol, ROMaddress + 1);
+            ST.addEntry(symbol, ROMaddress);
         }
         else ROMaddress++;
     }
@@ -39,6 +39,7 @@ int main(int argc, char const *argv[])
             string destCode = C.dest(P2.dest());
             string jumpCode = C.jump(P2.jump());
             binInstr = "111" + compCode + destCode + jumpCode;
+            FO << binInstr << endl;
         }
         else if (P2.commandType() == A_COMMAND)
         {
@@ -53,8 +54,8 @@ int main(int argc, char const *argv[])
                 binInstr = "0" + DecimalToBits(RAMaddress);
                 RAMaddress++;
             }
+            FO << binInstr << endl;
         }
-        FO << binInstr << endl;
     }
     FO.close();
     return 0;

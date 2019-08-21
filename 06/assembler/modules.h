@@ -13,7 +13,7 @@ class SyntaxError {};
 
 enum command_t {A_COMMAND, C_COMMAND, L_COMMAND};
 
-typedef string bits;  // define bis as a string of "0"s and "1"s
+typedef string bits;  // define bits as a string of "0"s and "1"s
 
 const string LEGAL_PUNCTUATIONS = "_.$:";
 

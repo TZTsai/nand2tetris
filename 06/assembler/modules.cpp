@@ -29,7 +29,7 @@ Parser::~Parser()
 
 bool Parser::hasMoreCommands()
 {
-    return prog.good();
+    return prog.good() && prog.peek() != EOF;
 }
 
 void Parser::advance()
@@ -60,12 +60,11 @@ static void removeBlankAndComment(string &line)
         it++;
     }
 }
-
 static bool isSymbol(string str)
 {
     for (auto it = str.begin(); it != str.end(); it++)
     {
-        if (isalnum(*it) || LEGAL_PUNCTUATIONS.find(*it))
+        if (isalnum(*it) || LEGAL_PUNCTUATIONS.find(*it) != string::npos)
             continue;
         return false;
     }
@@ -89,7 +88,6 @@ void Parser::parse()
         advance();
         return;
     }
-
     char front = currentInstr[0];
     if (front == '@')
         type = A_COMMAND;
@@ -102,8 +100,8 @@ void Parser::parse()
     // parse A_COMMAND or L_COMMAND
     {
         string str = currentInstr.substr(1);
-        if (!isSymbol(str)) throw SyntaxError();
         if (front == '(') str.pop_back();
+        if (!isSymbol(str)) throw SyntaxError();
         symbol_str = str;
     }
     else
@@ -222,7 +220,22 @@ bits Code::jump(string mnemonic)
     return p->second;
 }
 
-SymbolTable::SymbolTable(){}
+SymbolTable::SymbolTable()
+{
+    for (size_t i = 0; i < 16; i++)
+    {
+        ostringstream os;
+        os << "R" << i;
+        addEntry(os.str(), i);
+    }
+    addEntry("SP", 0);
+    addEntry("LCL", 1);
+    addEntry("ARG", 2);
+    addEntry("THIS", 3);
+    addEntry("THAT", 4);
+    addEntry("SCREEN", 16384);
+    addEntry("KBD", 24576);
+}
 
 void SymbolTable::addEntry(string symbol, int address)
 {

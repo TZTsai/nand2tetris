@@ -1,20 +1,25 @@
 {
+    // See https://go.microsoft.com/fwlink/?LinkId=733558 
+    // for the documentation about the tasks.json format
+    "version": "2.0.0",
     "tasks": [
         {
             "type": "shell",
-            "label": "g++.exe build active file",
-            "command": "C:\\MinGW\\bin\\g++.exe",
+            "label": "g++ build active file",
+            "command": "/usr/bin/g++",
             "args": [
                 "-g",
-                "{fileDirname}\\assembler.cpp",
-                "{fileDirname}\\modules.cpp",
+                "${fileDirname}/modules.cpp",
+                "${fileDirname}/assembler.cpp",
                 "-o",
-                "{fileDirname}\\asm"
+                "${fileDirname}/asm"
             ],
             "options": {
-                "cwd": "C:\\MinGW\\bin"
-            }
+                "cwd": "/usr/bin"
+            },
+            "problemMatcher": [
+                "$gcc"
+            ]
         }
-    ],
-    "version": "2.0.0"
+    ]
 }

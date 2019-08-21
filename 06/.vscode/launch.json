@@ -5,20 +5,19 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "g++.exe build and debug active file",
+            "name": "(gdb) Launch",
             "type": "cppdbg",
             "request": "launch",
-            "program": "${fileDirname}\\asm",
+            "program": "${workspaceFolder}/assembler/asm",
             "args": [
-                "..\\MaxL.asm",
-                "..\\MaxL.hack"
+                "max/Max.asm",
+                "max/Max.hack"
             ],
             "stopAtEntry": false,
             "cwd": "${workspaceFolder}",
             "environment": [],
             "externalConsole": false,
             "MIMode": "gdb",
-            "miDebuggerPath": "C:\\MinGW\\bin\\gdb.exe",
             "setupCommands": [
                 {
                     "description": "Enable pretty-printing for gdb",
@@ -26,6 +25,7 @@
                     "ignoreFailures": true
                 }
             ],
+            "preLaunchTask": "g++ build active file",
         }
     ]
 }
