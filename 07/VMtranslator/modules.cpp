@@ -1,4 +1,4 @@
-#include <modules.h>
+#include "modules.h"
 
 Parser::Parser(string fileName)
 {
@@ -23,7 +23,7 @@ bool Parser::hasMoreCommands()
 static void removeComment(string &line)
 {
     line = line.substr(0, line.find("//"));
-    if (line.find_first_not_of(' ') == string::npos)
+    if (line.find_first_not_of(" \r") == string::npos)
         line = "";
 }
 

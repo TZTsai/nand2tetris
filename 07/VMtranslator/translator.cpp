@@ -8,12 +8,13 @@ void writeASM(string vmFileName, CodeWriter &asmWriter)
     while (vmParser.hasMoreCommands())
     {
         vmParser.advance();
-        if (vmParser.commandType() == C_ARITHMETIC)
+        command_t type = vmParser.commandType();
+        if (type == C_ARITHMETIC)
             asmWriter.writeArithmetic(vmParser.arg1());
-        else if (vmParser.commandType() == C_PUSH)
+        else if (type == C_PUSH)
             asmWriter.WritePushPop(C_PUSH, vmParser.arg1(), 
             vmParser.arg2());
-        else if (vmParser.commandType() == C_POP)
+        else if (type == C_POP)
             asmWriter.WritePushPop(C_POP, vmParser.arg1(),
             vmParser.arg2());
         else
