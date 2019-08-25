@@ -3,7 +3,7 @@
 
 void writeASM(string vmFileName, CodeWriter &asmWriter)
 {
-    Parser vmParser vmFileName;
+    Parser vmParser(vmFileName);
     asmWriter.setFileName(vmFileName);
     while (vmParser.hasMoreCommands())
     {
@@ -11,10 +11,10 @@ void writeASM(string vmFileName, CodeWriter &asmWriter)
         if (vmParser.commandType() == C_ARITHMETIC)
             asmWriter.writeArithmetic(vmParser.arg1());
         else if (vmParser.commandType() == C_PUSH)
-            asmWriter.writePushPop(C_PUSH, vmParser.arg1(), 
+            asmWriter.WritePushPop(C_PUSH, vmParser.arg1(), 
             vmParser.arg2());
         else if (vmParser.commandType() == C_POP)
-            asmWriter.writePushPop(C_POP, vmParser.arg1(),
+            asmWriter.WritePushPop(C_POP, vmParser.arg1(),
             vmParser.arg2());
         else
             continue;  // modify this later
