@@ -2,8 +2,6 @@
 #include <fstream>
 #include <sstream>
 #include <string>
-#include <vector>
-#include <cassert>
 
 using namespace std;
 
@@ -35,3 +33,16 @@ public:
     ~Parser();
 };
 
+class CodeWriter
+{
+    ofstream out;
+    string vmFileName;
+
+public:
+    CodeWriter(string asmFileName);
+    void setFileName(string fileName);
+    void writeArithmetic(string cmd);
+    void WritePushPop(command_t type, string segment, int index);
+    void close();
+    ~CodeWriter();
+};

@@ -180,7 +180,9 @@ Code::Code()
   compDict.insert(pair<string, bits>("A-1", "0110010"));
   compDict.insert(pair<string, bits>("M-1", "1110010"));
   compDict.insert(pair<string, bits>("D+A", "0000010"));
+  compDict.insert(pair<string, bits>("A+D", "1000010"));
   compDict.insert(pair<string, bits>("D+M", "1000010"));
+  compDict.insert(pair<string, bits>("M+D", "1000010"));
   compDict.insert(pair<string, bits>("D-A", "0010011"));
   compDict.insert(pair<string, bits>("D-M", "1010011"));
   compDict.insert(pair<string, bits>("A-D", "0000111"));
