@@ -2,6 +2,7 @@
 #include <fstream>
 #include <sstream>
 #include <string>
+#include <cassert>
 
 using namespace std;
 
@@ -35,8 +36,10 @@ public:
 
 class CodeWriter
 {
+    int label_num;
     ofstream out;
     string vmFileName;
+    void gotoAddress(const string &segment, int index);
 
 public:
     CodeWriter(string asmFileName);

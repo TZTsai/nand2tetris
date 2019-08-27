@@ -83,6 +83,7 @@ int Parser::arg2()
 
 CodeWriter::CodeWriter(string asmFileName)
 {
+    label_num = 0;
     out.open(asmFileName);
     if (!out)
     {
@@ -101,19 +102,67 @@ void CodeWriter::setFileName(string fileName)
     vmFileName = fileName;
 }
 
-void CodeWriter::writeArithmetic(string cmd)
+static string getAddressSymbol(const string &segment)
+{
+    if (segment == "local")
+        return "LCL";
+    if (segment == "argument")
+        return "ARG";
+    if (segment == "this")
+        return "THIS";
+    else return "THAT";
+}
+
+static void incSP(ostream &out)
+{
+    out << "@SP\n" << "M=M+1\n";
+}
+
+static void decSP(ostream &out)
+{
+    out << "@SP\n" << "M=M-1\n";
+}
+
+static void atStackTop(ostream &out)
 {
     out << "@SP\n" << "A=M-1\n";
+}
+
+static void regNum(ostream &out, int n)
+{
+    out << "@" << n << endl;
+    out << "D=A\n";
+}
+
+static void push(ostream &out)
+// requires A registers the requested address
+{
+    out << "D=M\n";
+    out << "@SP\n" << "A=M\n" << "M=D\n";
+    incSP(out);
+}
+
+static void pop(ostream &out)
+// register the content at top into D and dec SP
+{
+    atStackTop(out);
+    out << "D=M\n";
+    decSP(out);
+}
+
+void CodeWriter::writeArithmetic(string cmd)
+{
     if (cmd == "not" || cmd == "neg")
     {
+        atStackTop(out);
         if (cmd == "not")
             out << "M=!M\n";
         else out << "M=-M\n";
     }
     else
     {
-        out << "D=M\n";
-        out << "@SP\n" << "M=M-1\n" << "A=M-1\n";
+        pop(out);
+        atStackTop(out);
         if (cmd == "add" || cmd == "sub" 
         || cmd == "and" || cmd == "or")
         {
@@ -123,21 +172,46 @@ void CodeWriter::writeArithmetic(string cmd)
                 out << "M=M-D\n";
             else if (cmd == "and")
                 out << "M=D&M\n";
-            else out << "M=D|M";
+            else out << "M=D|M\n";
         }
         else
         {
-            out << "D=M-D\n" << "M=-1\n";  // first set M to be true
-            out << "@TRUE\n" << "D;";  // if the comparison holds, jump to the end
+            out << "D=M-D\n" << "M=-1\n"  // first set M to be true
+            << "@L" << label_num << "\nD;";  // if the comparison holds, jump to the end
             if (cmd == "gt")
                 out << "JGT\n";
             else if (cmd == "eq")
                 out << "JEQ\n";
             else out << "JLT\n";
-            out << "@SP\n" << "A=M-1\n";
-            out << "M=0\n" << "(TRUE)\n";
+            atStackTop(out);
+            out << "M=0\n" << "(L" << label_num << ")\n";
+            label_num++;
         }
     }
+}
+
+void CodeWriter::gotoAddress(const string &segment, int index)
+{
+    regNum(out, index);
+    if (segment == "local" || segment == "argument" ||
+        segment == "this" || segment == "that")
+    {
+        out << "@" << getAddressSymbol(segment) << endl;
+        out << "A=D+M\n";  // address = base + index
+    }
+    else if (segment == "pointer" || segment == "temp") 
+    {
+        int base;
+        if (segment == "pointer") base = 3;
+        else base = 5;
+        out << "@" << base << endl;
+        out << "A=D+A\n";
+    }
+    else if (segment == "static")
+    {
+        out << "@" << vmFileName << "." << index << endl;
+    }
+    else throw SyntaxError();
 }
 
 void CodeWriter::WritePushPop(command_t type, string segment, int index)
@@ -146,16 +220,25 @@ void CodeWriter::WritePushPop(command_t type, string segment, int index)
     {
         if (type == C_PUSH)
         {
-            out << "@" << index << endl;
-            out << "D=A\n";
-            out << "@SP\n" << "A=M\n";
-            out << "M=D\n";
-            out << "@SP\n" << "M=M+1\n";
+            regNum(out, index);
+            out << "@SP\n" << "A=M\n" << "M=D\n";
+            incSP(out);
         }
         else throw SyntaxError();
     }
     else
     {
-        return;  // modify this later
+        if (type == C_PUSH)
+        {
+            gotoAddress(segment, index);
+            push(out);
+        }
+        else
+        {
+            gotoAddress(segment, index);
+            out << "D=A\n" << "@R13\n" << "M=D\n";
+            pop(out);
+            out << "@R13\n" << "A=M\n" << "M=D\n";
+        }
     }
 }
