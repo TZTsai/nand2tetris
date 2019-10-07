@@ -5,6 +5,7 @@ void writeASM(string vmPath, string vmFileName, CodeWriter &asmWriter)
 {
     Parser vmParser(vmPath);
     asmWriter.setFileName(vmFileName);
+    asmWriter.writeInit();
     while (vmParser.hasMoreCommands())
     {
         vmParser.advance();
@@ -12,11 +13,17 @@ void writeASM(string vmPath, string vmFileName, CodeWriter &asmWriter)
         if (type == C_ARITHMETIC)
             asmWriter.writeArithmetic(vmParser.arg1());
         else if (type == C_PUSH)
-            asmWriter.WritePushPop(C_PUSH, vmParser.arg1(), 
+            asmWriter.writePushPop(C_PUSH, vmParser.arg1(), 
             vmParser.arg2());
         else if (type == C_POP)
-            asmWriter.WritePushPop(C_POP, vmParser.arg1(),
+            asmWriter.writePushPop(C_POP, vmParser.arg1(),
             vmParser.arg2());
+        else if (type == C_LABEL)
+            asmWriter.writeLabel(vmParser.arg1());
+        else if (type == C_GOTO)
+            asmWriter.writeGoto(vmParser.arg1());
+        else if (type == C_IF)
+            asmWriter.writeIf(vmParser.arg1());
         else
             continue;  // modify this later
     }

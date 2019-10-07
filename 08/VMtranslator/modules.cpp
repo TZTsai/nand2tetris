@@ -157,7 +157,9 @@ static void pop(ostream &out)
 
 void CodeWriter::writeInit()
 {
-
+    out << "@256\n" << "D=M\n";
+    out << "@SP\n" << "M=D\n";
+    writeCall("Sys.init", 0);
 }
 
 void CodeWriter::writeArithmetic(string cmd)
@@ -272,4 +274,10 @@ void CodeWriter::writeIf(string label)
     out << "D=M\n";
     out << "@" << label << endl;
     out << "D;JNE\n";  
+}
+
+void CodeWriter::writeCall(string functionName, int numArgs)
+{
+    // need to deal with the frame
+    writeGoto(functionName);
 }
