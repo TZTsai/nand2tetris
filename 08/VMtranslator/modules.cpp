@@ -157,13 +157,15 @@ static void pop(ostream &out)
 
 void CodeWriter::writeInit()
 {
-    out << "@256\n" << "D=M\n";
+    out << "// init\n";
+    regNum(out, 256);
     out << "@SP\n" << "M=D\n";
     writeCall("Sys.init", 0);
 }
 
 void CodeWriter::writeArithmetic(string cmd)
 {
+    out << "// " << cmd << endl;
     if (cmd == "not" || cmd == "neg")
     {
         atStackTop(out);
@@ -234,6 +236,7 @@ void CodeWriter::writePushPop(command_t type, string segment, int index)
     {
         if (type == C_PUSH)
         {
+            out << "// push " << segment << " " << index << "\n";
             regNum(out, index);
             out << "@SP\n" << "A=M\n" << "M=D\n";
             incSP(out);
@@ -244,11 +247,13 @@ void CodeWriter::writePushPop(command_t type, string segment, int index)
     {
         if (type == C_PUSH)
         {
+            out << "// push " << segment << " " << index << "\n";
             gotoAddress(segment, index);
             push(out);
         }
-        else
+        else  // it will change R13
         {
+            out << "// pop " << segment << " " << index << "\n";
             gotoAddress(segment, index);
             out << "D=A\n" << "@R13\n" << "M=D\n";
             pop(out);
@@ -264,12 +269,14 @@ void CodeWriter::writeLabel(string label)
 
 void CodeWriter::writeGoto(string label)
 {
+    out << "// goto " << label << endl;
     out << "@" << label << endl;
     out << "0;JMP\n";
 }
 
 void CodeWriter::writeIf(string label)
 {
+    out << "// if " << label << endl;
     atStackTop(out);
     out << "D=M\n";
     out << "@" << label << endl;

@@ -5,7 +5,7 @@ void writeASM(string vmPath, string vmFileName, CodeWriter &asmWriter)
 {
     Parser vmParser(vmPath);
     asmWriter.setFileName(vmFileName);
-    asmWriter.writeInit();
+    //asmWriter.writeInit();
     while (vmParser.hasMoreCommands())
     {
         vmParser.advance();
