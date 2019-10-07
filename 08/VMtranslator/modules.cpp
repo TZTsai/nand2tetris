@@ -276,7 +276,7 @@ void CodeWriter::writeGoto(string label)
 
 void CodeWriter::writeIf(string label)
 {
-    out << "// if " << label << endl;
+    out << "// if-goto " << label << endl;
     atStackTop(out);
     out << "D=M\n";
     out << "@" << label << endl;
