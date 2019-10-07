@@ -192,7 +192,9 @@ void CodeWriter::writeArithmetic(string cmd)
                 out << "JGT\n";
             else if (cmd == "eq")
                 out << "JEQ\n";
-            else out << "JLT\n";
+            else if (cmd =="lt")
+                out << "JLT\n";
+            else throw SyntaxError();
             atStackTop(out);
             out << "M=0\n" << "(L" << label_num << ")\n";
             label_num++;
@@ -253,7 +255,21 @@ void CodeWriter::writePushPop(command_t type, string segment, int index)
     }
 }
 
+void CodeWriter::writeLabel(string label)
+{
+    out << "(" << label << ")\n";
+}
+
+void CodeWriter::writeGoto(string label)
+{
+    out << "@" << label << endl;
+    out << "0;JMP\n";
+}
+
 void CodeWriter::writeIf(string label)
 {
-    
+    atStackTop(out);
+    out << "D=M\n";
+    out << "@" << label << endl;
+    out << "D;JNE\n";  
 }
