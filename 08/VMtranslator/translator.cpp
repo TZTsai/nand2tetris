@@ -36,7 +36,8 @@ int main(int argc, char* argv[])
             while ((ent = readdir (dir)) != NULL)
                 writeASM(ent->d_name, fileName, asmWriter);
             closedir (dir);
-        } else return -1;
+        } 
+        else return -1;
     }
     else  // a single file
     {

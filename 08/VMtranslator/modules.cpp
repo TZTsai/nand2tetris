@@ -110,7 +110,9 @@ static string getAddressSymbol(const string &segment)
         return "ARG";
     if (segment == "this")
         return "THIS";
-    else return "THAT";
+    if (segment == "that")
+        return "THAT";
+    throw SyntaxError();
 }
 
 static void incSP(ostream &out)
@@ -129,12 +131,14 @@ static void atStackTop(ostream &out)
 }
 
 static void regNum(ostream &out, int n)
+// store n in D
 {
     out << "@" << n << endl;
     out << "D=A\n";
 }
 
 static void push(ostream &out)
+// push [M] into the stack
 // requires A registers the requested address
 {
     out << "D=M\n";
@@ -143,11 +147,17 @@ static void push(ostream &out)
 }
 
 static void pop(ostream &out)
+// pop the stack
 // register the content at top into D and dec SP
 {
     atStackTop(out);
     out << "D=M\n";
     decSP(out);
+}
+
+void CodeWriter::writeInit()
+{
+
 }
 
 void CodeWriter::writeArithmetic(string cmd)
@@ -214,7 +224,7 @@ void CodeWriter::gotoAddress(const string &segment, int index)
     else throw SyntaxError();
 }
 
-void CodeWriter::WritePushPop(command_t type, string segment, int index)
+void CodeWriter::writePushPop(command_t type, string segment, int index)
 {
     if (segment == "constant")
     {
@@ -241,4 +251,9 @@ void CodeWriter::WritePushPop(command_t type, string segment, int index)
             out << "@R13\n" << "A=M\n" << "M=D\n";
         }
     }
+}
+
+void CodeWriter::writeIf(string label)
+{
+    
 }

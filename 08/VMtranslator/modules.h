@@ -44,8 +44,15 @@ class CodeWriter
 public:
     CodeWriter(string asmFileName);
     void setFileName(string fileName);
+    void writeInit();
     void writeArithmetic(string cmd);
-    void WritePushPop(command_t type, string segment, int index);
+    void writePushPop(command_t type, string segment, int index);
+    void writeLabel(string label);
+    void writeGoto(string label);
+    void writeIf(string label);
+    void writeCall(string functionName, int numArgs);
+    void writeReturn();
+    void writeFunction(string functionName, int numLocals);
     void close();
     ~CodeWriter();
 };
