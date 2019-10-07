@@ -279,6 +279,7 @@ void CodeWriter::writeIf(string label)
     out << "// if-goto " << label << endl;
     atStackTop(out);
     out << "D=M\n";
+    decSP(out);  // maybe if-goto need to decrease SP?
     out << "@" << label << endl;
     out << "D;JNE\n";  
 }

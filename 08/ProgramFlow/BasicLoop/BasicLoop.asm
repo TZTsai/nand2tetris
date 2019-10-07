@@ -125,10 +125,12 @@ A=M
 M=D
 @SP
 M=M+1
-// if LOOP_START
+// if-goto LOOP_START
 @SP
 A=M-1
 D=M
+@SP
+M=M-1
 @LOOP_START
 D;JNE
 // push local 0
