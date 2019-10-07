@@ -1,0 +1,2 @@
+all: translator.cpp modules.cpp
+	g++ -o vmTranslator translator.cpp modules.cpp
