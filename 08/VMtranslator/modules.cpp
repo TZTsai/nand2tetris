@@ -286,6 +286,7 @@ void CodeWriter::writeIf(string label)
 
 void CodeWriter::writeCall(string functionName, int numArgs)
 {
+    out << "// call " << functionName << numArgs << endl;
     // need to deal with the frame
     writeGoto(functionName);
 }

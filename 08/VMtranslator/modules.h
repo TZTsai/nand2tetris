@@ -39,6 +39,7 @@ class CodeWriter
     int label_num;
     ofstream out;
     string vmFileName;
+    string functionName;
     void gotoAddress(const string &segment, int index);
 
 public:
